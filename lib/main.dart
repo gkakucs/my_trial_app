@@ -7,9 +7,9 @@ void main() {
   runApp(MaterialApp(
     initialRoute: '/',
     routes: {
-      '/': (context) => SplashScreen(),
-      '/login':(context) => LoginScreen(),
-      '/home': (context) => HomeScreen(),
+      '/': (context) => const SplashScreen(),
+      '/login':(context) => const LoginScreen(),
+      '/home': (context) => const HomeScreen(),
     },
   ));
 }
