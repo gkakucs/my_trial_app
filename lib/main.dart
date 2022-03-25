@@ -5,7 +5,7 @@ import 'package:my_trial_app/HomeScreen.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: SplashScreen(),
+    initialRoute: '/',
     routes: {
       '/': (context) => SplashScreen(),
       '/login':(context) => LoginScreen(),
