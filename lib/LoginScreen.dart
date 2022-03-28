@@ -10,6 +10,18 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return MaterialApp(
+      title: 'LoginScreen',
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text("Login"),
+        ),
+        body: Column(
+          children: const [
+            Text("Login Screen")
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -22,27 +22,50 @@ class _SplashScreenState extends State<SplashScreen> {
     final response = await http
         .get(Uri.parse('https://api.themoviedb.org/3/authentication/token/new?api_key=' + MyConstants.API_Key));
     if (response.statusCode == 200) {
-      var token = newTokenResponse.fromJson(jsonDecode(response.body));
-      if (token.isSuccess == true) {
-        return token.requestToken;
-      } else {
+      //Status OK
+      try {
+        Map<String, dynamic> queryData = jsonDecode(response.body);
+        if (queryData["success"] == true) {
+          return queryData["request_token"];
+        } else {
+          return "";
+        }
+      } on Exception {
         return "";
       }
     } else {
+      //Status Not OK
       return "";
     }
   }
 
-  Future<void> validateWithLogin(String token) async{
-    http.post(Uri.parse(token));
+  Future<bool> validateWithLogin(String token) async {
+    final response = await http
+        .post(Uri.parse("https://api.themoviedb.org/3/authentication/token/validate_with_login?api_key=" + token));
+    if (response.statusCode == 200) {
+      //Status OK
+      try {
+        Map<String, dynamic> queryData = jsonDecode(response.body);
+        if (queryData["success"] == true) {
+          return true;
+        } else {
+          //Status Not OK
+          return false;
+        }
+      } on Exception {
+        return false;
+      }
+    } else {
+      //Status Not OK
+      return false;
+    }
   }
 
   Future<void> checkUserLoggedIn() async {
     bool result = false;
     String token = await requestToken();
-    if(token.isNotEmpty)
-    {
-
+    if (token.isNotEmpty) {
+      result = await validateWithLogin(token);
     }
 
     if (result) {
@@ -117,15 +140,17 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
-class newTokenResponse {
+class NewTokenResponse {
   final bool isSuccess;
   final String expirationDate;
   final String requestToken;
 
-  const newTokenResponse({required this.isSuccess, required this.expirationDate, required this.requestToken});
+  const NewTokenResponse({required this.isSuccess, required this.expirationDate, required this.requestToken});
 
-  factory newTokenResponse.fromJson(Map<String, dynamic> json) {
-    return newTokenResponse(
+  factory NewTokenResponse.fromJson(Map<String, dynamic> json) {
+    return NewTokenResponse(
         isSuccess: json["success"], expirationDate: json["expires_at"], requestToken: json["request_token"]);
   }
 }
+
+class AuthenticationResponse {}
