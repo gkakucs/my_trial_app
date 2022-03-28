@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:my_trial_app/UserData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:motion_toast/motion_toast.dart';
@@ -17,6 +17,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final Connectivity _connectivity = Connectivity();
+  final UserData userData = UserData();
 
   Future<String> requestToken() async {
     final response = await http
@@ -28,52 +29,75 @@ class _SplashScreenState extends State<SplashScreen> {
         if (queryData["success"] == true) {
           return queryData["request_token"];
         } else {
-          return "";
+          return "ErrorFailed";
         }
       } on Exception {
-        return "";
+        return "ErrorException";
       }
     } else {
       //Status Not OK
-      return "";
+      if (response.statusCode == 400) {
+        return "Error400";
+      } else {
+        if (response.statusCode == 404) {
+          return "Error404";
+        } else {
+          return "ErrorX";
+        }
+      }
     }
   }
 
-  Future<bool> validateWithLogin(String token) async {
-    final response = await http
-        .post(Uri.parse("https://api.themoviedb.org/3/authentication/token/validate_with_login?api_key=" + token));
+  Future<String> validateWithLogin(String token) async {
+    final response = await http.post(
+        Uri.parse(
+            "https://api.themoviedb.org/3/authentication/token/validate_with_login?api_key=" + MyConstants.API_Key),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'username': userData.getUserName(),
+          'password': userData.getPassword(),
+          'request_token': token
+        }));
     if (response.statusCode == 200) {
       //Status OK
       try {
         Map<String, dynamic> queryData = jsonDecode(response.body);
-        if (queryData["success"] == true) {
-          return true;
+        if (queryData["expires_at"] == true) {
+          return "OK";
         } else {
           //Status Not OK
-          return false;
+          return "ErrorFailed";
         }
       } on Exception {
-        return false;
+        return "ErrorException";
       }
     } else {
       //Status Not OK
-      return false;
+      if (response.statusCode == 400) {
+        return "Error400";
+      } else {
+        if (response.statusCode == 404) {
+          return "Error404";
+        } else {
+          return "ErrorX";
+        }
+      }
     }
   }
 
   Future<void> checkUserLoggedIn() async {
-    bool result = false;
     String token = await requestToken();
-    if (token.isNotEmpty) {
-      result = await validateWithLogin(token);
-    }
-
-    if (result) {
-      //User Logged in
-      Navigator.pushReplacementNamed(context, '/home');
+    if (token.isNotEmpty && !token.contains("Error")) {
+      String result = await validateWithLogin(token);
+      if (result.compareTo("OK") == 0) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        Navigator.pushReplacementNamed(context, '/login');
+      }
     } else {
-      //User not logged in
-      Navigator.pushReplacementNamed(context, '/login');
+      MotionToast.error(title: const Text('Error'), description: const Text("Something went wrong")).show(context);
     }
   }
 
@@ -87,7 +111,7 @@ class _SplashScreenState extends State<SplashScreen> {
           'Network connection OK',
         ),
       ).show(context);
-      checkUserLoggedIn();
+      Future.delayed(const Duration(seconds: 3), () => {checkUserLoggedIn()});
     } else {
       MotionToast.error(
         title: const Text('Error'),
@@ -101,36 +125,22 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'SplashScreen',
-      home: Scaffold(
-          body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        title: 'SplashScreen',
+        home: Scaffold(
+            body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Padding(padding: const EdgeInsets.all(50.0), child: Image.asset('assets/logo.png')),
           const SpinKitRing(
             color: Colors.blue,
             size: 50.0,
           ),
-          ElevatedButton(
-              onPressed: () => {
-                    MotionToast.success(
-                      title: const Text('Test'),
-                      description: const Text(
-                        'Desc',
-                      ),
-                    ).show(context)
-                  },
-              child: Text("Toast")),
-        ],
-      )),
-    );
+        ])));
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    checkInternet();
+    Future.delayed(Duration(seconds: 5), () => {checkInternet()});
   }
 
   @override
@@ -139,18 +149,3 @@ class _SplashScreenState extends State<SplashScreen> {
     super.dispose();
   }
 }
-
-class NewTokenResponse {
-  final bool isSuccess;
-  final String expirationDate;
-  final String requestToken;
-
-  const NewTokenResponse({required this.isSuccess, required this.expirationDate, required this.requestToken});
-
-  factory NewTokenResponse.fromJson(Map<String, dynamic> json) {
-    return NewTokenResponse(
-        isSuccess: json["success"], expirationDate: json["expires_at"], requestToken: json["request_token"]);
-  }
-}
-
-class AuthenticationResponse {}
