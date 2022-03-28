@@ -2,3 +2,4 @@ https://pub.dev/packages/motion_toast
 https://pub.dev/packages/http
 https://pub.dev/packages/connectivity_plus
 https://pub.dev/packages/flutter_spinkit
+https://pub.dev/packages/dart_json_mapper
