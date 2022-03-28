@@ -12,16 +12,26 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'HomeScreen',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "Home Screen"
+      home: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text("My Trial App"),
+            bottom: const TabBar(
+              tabs: [
+                Tab(child: Text("Movie List")),
+                Tab(child: Text("Favorites")),
+                Tab(child: Text("User data")),
+              ],
+            ),
           ),
-        ),
-        body: Column(
-          children: const [
-            Text("Home"),
-          ],
+          body: TabBarView(
+            children: [
+              Text("A"),
+              Text("B"),
+              Text("C")
+            ],
+          ),
         ),
       ),
     );
