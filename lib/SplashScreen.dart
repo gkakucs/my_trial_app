@@ -18,19 +18,32 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   final Connectivity _connectivity = Connectivity();
 
-  Future<bool> requestToken() async {
+  Future<String> requestToken() async {
     final response = await http
         .get(Uri.parse('https://api.themoviedb.org/3/authentication/token/new?api_key=' + MyConstants.API_Key));
     if (response.statusCode == 200) {
       var token = newTokenResponse.fromJson(jsonDecode(response.body));
-      return token.isSuccess;
+      if (token.isSuccess == true) {
+        return token.requestToken;
+      } else {
+        return "";
+      }
     } else {
-      return false;
+      return "";
     }
   }
 
+  Future<void> validateWithLogin(String token) async{
+    http.post(Uri.parse(token));
+  }
+
   Future<void> checkUserLoggedIn() async {
-    bool result = await requestToken();
+    bool result = false;
+    String token = await requestToken();
+    if(token.isNotEmpty)
+    {
+
+    }
 
     if (result) {
       //User Logged in
