@@ -36,18 +36,50 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.all(8.0),
                     child: Text("Movies"),
                   ),
-
                   SizedBox(
                     height: 100,
-                    child: Text("Fuck you zsolti"),
+                    child: ListView(
+                      children: userData.userMovies.map((e) => Text(e.Name)).toList(growable: false),
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: userData.userMovies
+                          .map((e) => Card(
+                                  child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Image.asset(
+                                        'assets/logo.png',
+                                        scale: 1,
+                                      )),
+                                  Text(e.Name),
+                                  const Padding(
+                                    padding: EdgeInsets.all(2),
+                                    child: Icon(
+                                      Icons.favorite,
+                                      color: Colors.red,
+                                      size: 10,
+                                    ),
+                                  )
+                                ],
+                              )))
+                          .toList(growable: false),
+                    ),
                   ),
                 ],
               ),
               ListView(
-                children: [Text("Favorit Movies")],
-              ),
-              ListView(
-                children: [Text("User Data")],
+                children: const [Text("User Data")],
               )
             ],
           ),
@@ -60,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
   }
+
   @override
   void dispose() {
     super.dispose();

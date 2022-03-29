@@ -20,9 +20,12 @@ class _SplashScreenState extends State<SplashScreen> {
     // Temporary user data
     userData.userName = '';
     userData.password = '';
-    //userData.userMovies.add(Movies.named("Star Wars", true));
-   // userData.userMovies.add(Movies.named("Lord of the rings", true));
-   // userData.userMovies.add(Movies.named("Prometheus", true));
+    userData.userMovies = [
+      Movies.named("Star Wars", true),
+      Movies.named("Lord of the rings", true),
+      Movies.named("Prometheus", true),
+      Movies.named("Alien", false)
+    ];
   }
 
   Future<void> checkUserLoggedIn() async {
