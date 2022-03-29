@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:motion_toast/motion_toast.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-
+import 'package:my_trial_app/Movies.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -16,6 +16,14 @@ class _SplashScreenState extends State<SplashScreen> {
   final Connectivity _connectivity = Connectivity();
   final UserData userData = UserData();
 
+  void addUserMovies() {
+    // Temporary user data
+    userData.userName = '';
+    userData.password = '';
+    //userData.userMovies.add(Movies.named("Star Wars", true));
+   // userData.userMovies.add(Movies.named("Lord of the rings", true));
+   // userData.userMovies.add(Movies.named("Prometheus", true));
+  }
 
   Future<void> checkUserLoggedIn() async {
     String token = await userData.requestToken();
@@ -70,6 +78,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    addUserMovies();
     Future.delayed(const Duration(seconds: 5), () => {checkInternet()});
   }
 

@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:my_trial_app/Movies.dart';
 import 'package:my_trial_app/MyConstants.dart';
 
 class UserData {
   static final UserData _userData = UserData._internal();
   String userName = '';
   String password = '';
+  List<Movies> userMovies = List<Movies>.empty();
 
   UserData._internal();
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'UserData.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -8,6 +9,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final UserData userData = UserData();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -27,13 +30,38 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           body: TabBarView(
             children: [
-              Text("A"),
-              Text("B"),
-              Text("C")
+              Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text("Movies"),
+                  ),
+
+                  SizedBox(
+                    height: 100,
+                    child: Text("Fuck you zsolti"),
+                  ),
+                ],
+              ),
+              ListView(
+                children: [Text("Favorit Movies")],
+              ),
+              ListView(
+                children: [Text("User Data")],
+              )
             ],
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
