@@ -79,8 +79,8 @@ class UserData {
       }
     } else {
       //Status Not OK
-      if (response.statusCode == 400) {
-        return "Error400";
+      if (response.statusCode == 401) {
+        return "Error401";
       } else {
         if (response.statusCode == 404) {
           return "Error404";

@@ -33,8 +33,10 @@ class _LoginScreenState extends State<LoginScreen> {
       userData.userName = _controllerUsername.text;
       userData.password = _controllerPassword.text;
       String token = await userData.requestToken();
+      print(token);
       if (!token.contains("Error")) {
         String result = await userData.validateWithLogin(token);
+        print(result);
         if (result.compareTo("OK") == 0) {
           Navigator.pushReplacementNamed(context, '/home');
         } else {
