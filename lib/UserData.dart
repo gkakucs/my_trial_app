@@ -68,7 +68,7 @@ class UserData {
       //Status OK
       try {
         Map<String, dynamic> queryData = jsonDecode(response.body);
-        if (queryData["expires_at"] == true) {
+        if (queryData["success"] == true) {
           return "OK";
         } else {
           //Status Not OK
