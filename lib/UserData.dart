@@ -92,44 +92,4 @@ class UserData {
         }
     }
   }
-
-  Future<String> newSession(String token) async {
-    final response = await http.post(
-        Uri.parse(
-            "https://api.themoviedb.org/3/authentication/session/new?api_key=" + MyConstants.API_Key),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{'request_token': token}));
-    switch (response.statusCode) {
-      case 200:
-        {
-          //Status OK
-          try {
-            Map<String, dynamic> queryData = jsonDecode(response.body);
-            print(queryData);
-            if (queryData["success"] == true) {
-              return "OK";
-            } else {
-              //Status Not OK
-              return "ErrorFailed";
-            }
-          } on Exception {
-            return "ErrorException";
-          }
-        }
-      case 401:
-        {
-          return "Error401";
-        }
-      case 404:
-        {
-          return "Error404";
-        }
-      default:
-        {
-          return "ErrorX";
-        }
-    }
-  }
 }

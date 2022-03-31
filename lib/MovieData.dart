@@ -110,7 +110,7 @@ class MovieData {
   Future<String> setFavoriteMovie(int id) async {
     final response = await http.post(
         Uri.parse(
-            "https://api.themoviedb.org/3/account/"+MyConstants.ACCOUNT_ID+"/favorite?api_key=<<api_key>>" + MyConstants.API_Key),
+            "https://api.themoviedb.org/3/account/"+MyConstants.ACCOUNT_ID+"/favorite?api_key=" + MyConstants.API_Key+"&session_id="),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
