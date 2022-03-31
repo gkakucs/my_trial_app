@@ -36,7 +36,8 @@ class _LoginScreenState extends State<LoginScreen> {
       print(token);
       if (!token.contains("Error")) {
         String result = await userData.validateWithLogin(token);
-        print(result);
+        //String result = await userData.newSession(token);
+        //String result = "Error";
         if (result.compareTo("OK") == 0) {
           Navigator.pushReplacementNamed(context, '/home');
         } else {

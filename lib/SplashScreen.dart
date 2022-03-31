@@ -1,9 +1,9 @@
+import 'package:my_trial_app/MovieData.dart';
 import 'package:my_trial_app/UserData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:motion_toast/motion_toast.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:my_trial_app/Movies.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -15,18 +15,8 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   final Connectivity _connectivity = Connectivity();
   final UserData userData = UserData();
+  final MovieData movieData = MovieData();
 
-  void addUserMovies() {
-    // Temporary user data
-    userData.userName = '';
-    userData.password = '';
-    userData.userMovies = [
-      Movies.named("Star Wars", true),
-      Movies.named("Lord of the rings", true),
-      Movies.named("Prometheus", true),
-      Movies.named("Alien", false)
-    ];
-  }
 
   Future<void> checkUserLoggedIn() async {
     String token = await userData.requestToken();
@@ -79,15 +69,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    addUserMovies();
+    movieData.getConfiguration();
     Future.delayed(const Duration(seconds: 5), () => {checkInternet()});
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 }

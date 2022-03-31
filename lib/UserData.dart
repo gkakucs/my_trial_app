@@ -5,7 +5,7 @@ import 'package:my_trial_app/MyConstants.dart';
 /*
 * TMDB:
 * Username: Pantokrator.dev
-* Password: tAlaldki1
+* Password: (szokasos)
 * */
 
 class UserData {
@@ -18,14 +18,6 @@ class UserData {
 
   factory UserData() {
     return _userData;
-  }
-
-  String getUserName() {
-    return userName;
-  }
-
-  String getPassword() {
-    return password;
   }
 
   Future<String> requestToken() async {
@@ -101,18 +93,25 @@ class UserData {
     }
   }
 
-  Future<String> getTopRatedMovies() async {
-    final response = await http.get(Uri.parse(
-        "https://api.themoviedb.org/3/movie/top_rated?api_key=" + MyConstants.API_Key + "&language=en-US&page=1"));
+  Future<String> newSession(String token) async {
+    final response = await http.post(
+        Uri.parse(
+            "https://api.themoviedb.org/3/authentication/session/new?api_key=" + MyConstants.API_Key),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{'request_token': token}));
     switch (response.statusCode) {
       case 200:
         {
+          //Status OK
           try {
             Map<String, dynamic> queryData = jsonDecode(response.body);
             print(queryData);
-            if (queryData["page"] == 1) {
+            if (queryData["success"] == true) {
               return "OK";
             } else {
+              //Status Not OK
               return "ErrorFailed";
             }
           } on Exception {

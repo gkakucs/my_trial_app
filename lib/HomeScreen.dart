@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:motion_toast/motion_toast.dart';
+import 'package:my_trial_app/MovieData.dart';
 import 'UserData.dart';
+import 'MovieData.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -10,10 +13,24 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final UserData userData = UserData();
+  final MovieData movieData = MovieData();
+
+  void setFavorite(int id) async {
+    String result = await movieData.setFavoriteMovie(id);
+    if (result.compareTo("OK") == 0) {
+
+    } else {
+      MotionToast.error(
+        title: const Text('Error'),
+        description: const Text(
+          'Failed to add movie to favorites.',
+        ),
+      ).show(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    userData.getTopRatedMovies();
     return MaterialApp(
         title: 'HomeScreen',
         home: DefaultTabController(
@@ -32,17 +49,42 @@ class _HomeScreenState extends State<HomeScreen> {
             body: TabBarView(
               children: [
                 Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text("Movies"),
-                    ),
                     SizedBox(
-                      height: 100,
-                      child: ListView(
-                        children: userData.userMovies.map((e) => Text(e.Name)).toList(growable: false),
-                      ),
-                    ),
+                        height: 550,
+                        child: ListView.builder(
+                            itemCount: movieData.movies.length,
+                            itemBuilder: ((context, index) {
+                              String title = movieData.movies.elementAt(index).name;
+                              Image img = movieData.movies.elementAt(index).img;
+                              int id = movieData.movies.elementAt(index).id;
+                              return Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Stack(
+                                      alignment: Alignment.topRight,
+                                      children: [
+                                        img,
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: IconButton(
+                                            icon: const Icon(Icons.favorite, color: Colors.red, size: 30),
+                                            onPressed: () {
+                                              setState(() {
+                                                setFavorite(id);
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }))),
                   ],
                 ),
                 Column(
@@ -63,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           'assets/logo.png',
                                           scale: 1,
                                         )),
-                                    Text(e.Name),
+                                    Text(e.name),
                                     const Padding(
                                       padding: EdgeInsets.all(2),
                                       child: Icon(
@@ -143,10 +185,23 @@ class _HomeScreenState extends State<HomeScreen> {
         ));
   }
 
+  Future<void> getMovies() async {
+    String result = await movieData.getTopRatedMovies();
+    if (!result.contains("OK")) {
+      MotionToast.error(
+        title: const Text('Error'),
+        description: const Text(
+          'Could not get top rated movies!',
+        ),
+      ).show(context);
+    }
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
-    userData.getTopRatedMovies();
+    getMovies();
   }
 
   @override
