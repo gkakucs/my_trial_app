@@ -13,6 +13,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    userData.getTopRatedMovies();
     return MaterialApp(
         title: 'HomeScreen',
         home: DefaultTabController(
@@ -145,12 +146,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-
+    userData.getTopRatedMovies();
   }
 
   @override
   void dispose() {
     super.dispose();
-
   }
 }
