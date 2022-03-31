@@ -102,37 +102,36 @@ class MovieData {
     return Image.network(Uri.parse(baseUrl + sizes[3] + movie.posterPath).toString());
   }
 
-  Future<String> getFavoriteMovies() async {
-    return "OK";
+  Future<bool> getFavoriteMovies() async {
+    return false;
     //https://developers.themoviedb.org/3/account/get-favorite-movies
   }
 
-  Future<String> setFavoriteMovie(int id) async {
+  Future<bool> setFavoriteMovie(int id,String sessionID) async {
     final response = await http.post(
         Uri.parse(
-            "https://api.themoviedb.org/3/account/"+MyConstants.ACCOUNT_ID+"/favorite?api_key=" + MyConstants.API_Key+"&session_id="),
+            "https://api.themoviedb.org/3/account/"+MyConstants.ACCOUNT_ID+"/favorite?api_key=" + MyConstants.API_Key+"&session_id="+sessionID),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{'media_type':'movie','media_id':id,'favorite':true})
     );
-    print(response.body);
     switch (response.statusCode) {
-      case 200:
+      case 201:
         {
-          return "OK";
+          return true;
         }
       case 401:
         {
-          return "Error401";
+          return false;
         }
       case 404:
         {
-          return "Error404";
+          return false;
         }
       default:
         {
-          return "ErrorX";
+          return false;
         }
     }
 

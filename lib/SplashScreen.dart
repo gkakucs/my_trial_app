@@ -17,18 +17,12 @@ class _SplashScreenState extends State<SplashScreen> {
   final UserData userData = UserData();
   final MovieData movieData = MovieData();
 
+  Future<void> checkUserLoggedIn() async{
 
-  Future<void> checkUserLoggedIn() async {
-    String token = await userData.requestToken();
-    if (token.isNotEmpty && !token.contains("Error")) {
-      String result = await userData.validateWithLogin(token);
-      if (result.compareTo("OK") == 0) {
-        Navigator.pushReplacementNamed(context, '/home');
-      } else {
-        Navigator.pushReplacementNamed(context, '/login');
-      }
+    if (false) {
+      Navigator.pushReplacementNamed(context, '/home');
     } else {
-      MotionToast.error(title: const Text('Error'), description: const Text("Something went wrong")).show(context);
+      Navigator.pushReplacementNamed(context, '/login');
     }
   }
 
@@ -42,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
           'Network connection OK',
         ),
       ).show(context);
-      Future.delayed(const Duration(seconds: 3), () => {checkUserLoggedIn()});
+      checkUserLoggedIn();
     } else {
       MotionToast.error(
         title: const Text('Error'),

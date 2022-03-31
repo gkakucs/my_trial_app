@@ -16,9 +16,13 @@ class _HomeScreenState extends State<HomeScreen> {
   final MovieData movieData = MovieData();
 
   void setFavorite(int id) async {
-    String result = await movieData.setFavoriteMovie(id);
-    if (result.compareTo("OK") == 0) {
-
+    if (await movieData.setFavoriteMovie(id, userData.sessionId)) {
+      MotionToast.success(
+        title: const Text('Info'),
+        description: const Text(
+          'Added to favorites.',
+        ),
+      ).show(context);
     } else {
       MotionToast.error(
         title: const Text('Error'),
@@ -31,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    movieData.getFavoriteMovies();
     return MaterialApp(
         title: 'HomeScreen',
         home: DefaultTabController(
@@ -93,90 +98,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     Expanded(
                       child: ListView(
                         shrinkWrap: true,
-                        children: userData.userMovies
-                            .map((e) => Card(
-                                    child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Image.asset(
-                                          'assets/logo.png',
-                                          scale: 1,
-                                        )),
-                                    Text(e.name),
-                                    const Padding(
-                                      padding: EdgeInsets.all(2),
-                                      child: Icon(
-                                        Icons.favorite,
-                                        color: Colors.red,
-                                        size: 10,
-                                      ),
-                                    )
-                                  ],
-                                )))
-                            .toList(growable: false),
+                        children: [],
                       ),
                     ),
                   ],
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-                            child: Text("Username:"),
-                          ),
-                          SizedBox(
-                            width: 150,
-                            height: 35,
-                            child: TextField(
-                              obscureText: false,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Username',
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-                            child: Text("Password:"),
-                          ),
-                          SizedBox(
-                            width: 150,
-                            height: 35,
-                            child: TextField(
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Password',
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(1, 10, 1, 10),
-                      child: ElevatedButton(
-                        child: const Text("Change Password"),
-                        onPressed: () => {},
-                      ),
-                    )
+                  children: const [
+                    Text("id"),
+                    Text("name"),
+                    Text("username"),
+                    Text("Adult content"),
+                    Text("Avatar"),
                   ],
                 ),
               ],
