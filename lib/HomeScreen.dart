@@ -23,6 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
           'Added to favorites.',
         ),
       ).show(context);
+      await movieData.getFavoriteMovies(userData.sessionId);
+      setState(() {});
     } else {
       MotionToast.error(
         title: const Text('Error'),
@@ -42,10 +44,10 @@ class _HomeScreenState extends State<HomeScreen> {
           length: 3,
           child: Scaffold(
             appBar: AppBar(
-              title: const Text("My Trial App"),
+              title: const Text("My IMDB App"),
               bottom: const TabBar(
                 tabs: [
-                  Tab(child: Text("Movie List")),
+                  Tab(child: Text("Movie List"),),
                   Tab(child: Text("Favorites")),
                   Tab(child: Text("User data")),
                 ],
@@ -65,23 +67,27 @@ class _HomeScreenState extends State<HomeScreen> {
                               Image img = movieData.movies.elementAt(index).img;
                               int id = movieData.movies.elementAt(index).id;
                               return Padding(
-                                padding: const EdgeInsets.all(2.0),
+                                padding: const EdgeInsets.all(4.0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Stack(
                                       alignment: Alignment.topRight,
                                       children: [
-                                        img,
+                                        Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: SizedBox(
+                                            child: img,
+                                            width: 300,
+                                            height: 400,
+                                          ),
+                                        ),
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: IconButton(
                                             icon: const Icon(Icons.favorite, color: Colors.red, size: 30),
                                             onPressed: () {
-                                              setState(() {
-                                                setFavorite(id);
-                                                movieData.getFavoriteMovies(userData.sessionId);
-                                              });
+                                              setFavorite(id);
                                             },
                                           ),
                                         ),
@@ -104,11 +110,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           Image img = movieData.favoriteMovies.elementAt(index).img;
                           int id = movieData.favoriteMovies.elementAt(index).id;
                           return Padding(
-                            padding: const EdgeInsets.all(2.0),
+                            padding: const EdgeInsets.all(4.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                img,
+                                SizedBox(
+                                  child: img,
+                                  width: 300,
+                                  height: 400,
+                                ),
                               ],
                             ),
                           );
@@ -122,42 +132,43 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(20.0),
-                      child: SizedBox(
-                          width:200,
-                          height: 200,
-                          child: userData.avatarImg),
+                      child: SizedBox(width: 200, height: 200, child: userData.avatarImg),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const SizedBox(width: 120, height: 50, child: Text("ID: ")),
-                        SizedBox(width: 120, height: 50,child: Text(userData.id.toString())),
+                        SizedBox(width: 120, height: 50, child: Text(userData.id.toString())),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(width: 120, height: 50,child: Text("Name: ")),
-                        SizedBox(width: 120, height: 50,child: Text(userData.name.toString())),
+                        const SizedBox(width: 120, height: 50, child: Text("Name: ")),
+                        SizedBox(width: 120, height: 50, child: Text(userData.name.toString())),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(width: 120, height: 50,child: Text("Username: ")),
-                        SizedBox(width: 120, height: 50,child: Text(userData.userName.toString())),
+                        const SizedBox(width: 120, height: 50, child: Text("Username: ")),
+                        SizedBox(width: 120, height: 50, child: Text(userData.userName.toString())),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(width: 120, height: 50,child: Text("Adult content: ")),
-                        SizedBox(width: 120, height: 50,child: Text(userData.includeAdult.toString())),
+                        const SizedBox(width: 120, height: 50, child: Text("Adult content: ")),
+                        SizedBox(width: 120, height: 50, child: Text(userData.includeAdult.toString())),
                       ],
                     ),
-                    ElevatedButton(onPressed: ()=>{setState(() {
-                      getUserInformation();
-                    })}, child: const Text("Refresh"))
+                    ElevatedButton(
+                        onPressed: () => {
+                              setState(() {
+                                getUserInformation();
+                              })
+                            },
+                        child: const Text("Refresh"))
                   ],
                 ),
               ],
@@ -165,8 +176,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ));
   }
-  Future<void> getUserInformation() async
-  {
+
+  Future<void> getUserInformation() async {
     if (!await userData.getUserDetails()) {
       MotionToast.error(
         title: const Text('Error'),
