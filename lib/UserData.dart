@@ -5,6 +5,7 @@ import 'package:my_trial_app/Movies.dart';
 import 'package:my_trial_app/MyConstants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 /*
 * TMDB:
 * Username: Pantokrator.dev
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 * */
 
 class UserData {
+
   int id=0;
   String name='';
   String userName = '';
@@ -135,5 +137,12 @@ class UserData {
           return false;
         }
     }
+  }
+
+  Future<bool> checkForPreviousUserSession() async{
+    final _prefs = await SharedPreferences.getInstance();
+    final String? previousSessionId = _prefs.getString('session_id');
+    //if(previousSessionId)
+    return false;
   }
 }
