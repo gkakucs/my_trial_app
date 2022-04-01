@@ -9,6 +9,7 @@ class MovieData {
   String baseUrl = '';
   List<String> sizes = List.empty(growable: true);
   List<Movies> movies = List.empty(growable: true);
+  List<Movies> favoriteMovies = List.empty(growable: true);
 
   MovieData._internal();
 
@@ -57,7 +58,7 @@ class MovieData {
     }
   }
 
-  Future<String> getTopRatedMovies() async {
+  Future<bool> getTopRatedMovies() async {
     final response = await http.get(Uri.parse(
         "https://api.themoviedb.org/3/movie/top_rated?api_key=" + MyConstants.API_Key + "&language=en-US&page=1"));
     switch (response.statusCode) {
@@ -70,30 +71,30 @@ class MovieData {
             for (var element in movieList) {
               Map<String, dynamic> movieData = Map<String, dynamic>.from(element);
               Movies movie = Movies.named(movieData["title"], false, movieData["id"], movieData["poster_path"]);
-              movies.add(movie);
               movie.img = await getImage(movie);
+              movies.add(movie);
             }
 
             if (movies.isNotEmpty) {
-              return "OK";
+              return true;
             } else {
-              return "ErrorFailed";
+              return false;
             }
           } on Exception {
-            return "ErrorException";
+            return false;
           }
         }
       case 401:
         {
-          return "Error401";
+          return false;
         }
       case 404:
         {
-          return "Error404";
+          return false;
         }
       default:
         {
-          return "ErrorX";
+          return false;
         }
     }
   }
@@ -102,20 +103,60 @@ class MovieData {
     return Image.network(Uri.parse(baseUrl + sizes[3] + movie.posterPath).toString());
   }
 
-  Future<bool> getFavoriteMovies() async {
-    return false;
+  Future<bool> getFavoriteMovies(String sessionID) async {
     //https://developers.themoviedb.org/3/account/get-favorite-movies
+    final response = await http.get(Uri.parse("https://api.themoviedb.org/3/account/" +
+        MyConstants.ACCOUNT_ID +
+        "/favorite/movies?api_key=" +
+        MyConstants.API_Key +
+        "&session_id=" +
+        sessionID +
+        "&language=en-US&sort_by=created_at.asc&page=1"));
+    switch (response.statusCode) {
+      case 200:
+        {
+          try {
+            Map<String, dynamic> queryData = jsonDecode(response.body);
+            List<dynamic> movieList = queryData["results"];
+            favoriteMovies.clear();
+            for (var element in movieList) {
+              Map<String, dynamic> movieData = Map<String, dynamic>.from(element);
+              Movies movie = Movies.named(movieData["title"], false, movieData["id"], movieData["poster_path"]);
+              movie.img = await getImage(movie);
+              favoriteMovies.add(movie);
+            }
+          } on Exception {
+            return false;
+          }
+          return true;
+        }
+      case 401:
+        {
+          return false;
+        }
+      case 404:
+        {
+          return false;
+        }
+      default:
+        {
+          return false;
+        }
+    }
   }
 
-  Future<bool> setFavoriteMovie(int id,String sessionID) async {
+  Future<bool> setFavoriteMovie(int id, String sessionID) async {
     final response = await http.post(
-        Uri.parse(
-            "https://api.themoviedb.org/3/account/"+MyConstants.ACCOUNT_ID+"/favorite?api_key=" + MyConstants.API_Key+"&session_id="+sessionID),
+        Uri.parse("https://api.themoviedb.org/3/account/" +
+            MyConstants.ACCOUNT_ID +
+            "/favorite?api_key=" +
+            MyConstants.API_Key +
+            "&session_id=" +
+            sessionID),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, dynamic>{'media_type':'movie','media_id':id,'favorite':true})
-    );
+        body: jsonEncode(<String, dynamic>{'media_type': 'movie', 'media_id': id, 'favorite': true}));
     switch (response.statusCode) {
       case 201:
         {

@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    movieData.getFavoriteMovies();
+    movieData.getFavoriteMovies(userData.sessionId);
     return MaterialApp(
         title: 'HomeScreen',
         home: DefaultTabController(
@@ -80,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             onPressed: () {
                                               setState(() {
                                                 setFavorite(id);
+                                                movieData.getFavoriteMovies(userData.sessionId);
                                               });
                                             },
                                           ),
@@ -96,21 +97,67 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Expanded(
-                      child: ListView(
-                        shrinkWrap: true,
-                        children: [],
+                      child: ListView.builder(
+                        itemCount: movieData.favoriteMovies.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          String title = movieData.favoriteMovies.elementAt(index).name;
+                          Image img = movieData.favoriteMovies.elementAt(index).img;
+                          int id = movieData.favoriteMovies.elementAt(index).id;
+                          return Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                img,
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ],
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text("id"),
-                    Text("name"),
-                    Text("username"),
-                    Text("Adult content"),
-                    Text("Avatar"),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: SizedBox(
+                          width:200,
+                          height: 200,
+                          child: userData.avatarImg),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(width: 120, height: 50, child: Text("ID: ")),
+                        SizedBox(width: 120, height: 50,child: Text(userData.id.toString())),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(width: 120, height: 50,child: Text("Name: ")),
+                        SizedBox(width: 120, height: 50,child: Text(userData.name.toString())),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(width: 120, height: 50,child: Text("Username: ")),
+                        SizedBox(width: 120, height: 50,child: Text(userData.userName.toString())),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(width: 120, height: 50,child: Text("Adult content: ")),
+                        SizedBox(width: 120, height: 50,child: Text(userData.includeAdult.toString())),
+                      ],
+                    ),
+                    ElevatedButton(onPressed: ()=>{setState(() {
+                      getUserInformation();
+                    })}, child: const Text("Refresh"))
                   ],
                 ),
               ],
@@ -118,10 +165,20 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ));
   }
+  Future<void> getUserInformation() async
+  {
+    if (!await userData.getUserDetails()) {
+      MotionToast.error(
+        title: const Text('Error'),
+        description: const Text(
+          'Could not get user data!',
+        ),
+      ).show(context);
+    }
+  }
 
-  Future<void> getMovies() async {
-    String result = await movieData.getTopRatedMovies();
-    if (!result.contains("OK")) {
+  Future<void> getUiData() async {
+    if (!await movieData.getTopRatedMovies()) {
       MotionToast.error(
         title: const Text('Error'),
         description: const Text(
@@ -129,13 +186,22 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ).show(context);
     }
+    if (!await movieData.getFavoriteMovies(userData.sessionId)) {
+      MotionToast.error(
+        title: const Text('Error'),
+        description: const Text(
+          'Could not get favorite movies!',
+        ),
+      ).show(context);
+    }
+    getUserInformation();
     setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
-    getMovies();
+    getUiData();
   }
 
   @override

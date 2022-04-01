@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:my_trial_app/MovieData.dart';
 import 'package:my_trial_app/Movies.dart';
 import 'package:my_trial_app/MyConstants.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/material.dart';
 /*
 * TMDB:
 * Username: Pantokrator.dev
@@ -10,15 +12,20 @@ import 'package:url_launcher/url_launcher.dart';
 * */
 
 class UserData {
-  static final UserData _userData = UserData._internal();
+  int id=0;
+  String name='';
   String userName = '';
-  String password = '';
   String sessionId = '';
+  String avatarPath ='';
+  bool includeAdult = false;
   String requestTokenString = '';
+  Image avatarImg = Image.asset('logo.png');
+
   List<Movies> userMovies = List<Movies>.empty();
 
   UserData._internal();
 
+  static final UserData _userData = UserData._internal();
   factory UserData() {
     return _userData;
   }
@@ -90,8 +97,43 @@ class UserData {
     );
   }
 
-  Future<bool> getUserDetails() async{
+  Future<Image> getImage(String path) async {
+    MovieData movieData = MovieData();
+    return Image.network(Uri.parse(movieData.baseUrl + movieData.sizes[3] + path).toString());
+  }
+
+  Future<bool> getUserDetails() async {
     //https://developers.themoviedb.org/3/account/get-account-details
-    return false;
+    final response = await http.get(
+        Uri.parse('https://api.themoviedb.org/3/account?api_key=' + MyConstants.API_Key + '&session_id=' + sessionId));
+
+    switch (response.statusCode) {
+      case 200: //Status OK
+        {
+          Map<String, dynamic> queryData = jsonDecode(response.body);
+
+          id = queryData["id"];
+          name = queryData["name"];
+          userName = queryData["username"];
+          includeAdult = queryData["include_adult"];
+          Map<String,dynamic> avatar  = queryData["avatar"];
+          Map<String,dynamic> tmdb = avatar["tmdb"];
+          avatarPath=tmdb["avatar_path"];
+          avatarImg = await getImage(avatarPath);
+          return true;
+        }
+      case 401: //Error 400
+        {
+          return false;
+        }
+      case 404: //Error 404
+        {
+          return false;
+        }
+      default:
+        {
+          return false;
+        }
+    }
   }
 }
