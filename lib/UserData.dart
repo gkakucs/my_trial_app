@@ -1,16 +1,13 @@
+import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:my_trial_app/MovieData.dart';
+import 'package:flutter/material.dart';
 import 'package:my_trial_app/Movies.dart';
+import 'package:my_trial_app/MovieData.dart';
 import 'package:my_trial_app/MyConstants.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-/*
-* TMDB:
-* Username: Pantokrator.dev
-* Password: (szokasos)
-* */
 
 class UserData {
 
@@ -144,5 +141,31 @@ class UserData {
     final String? previousSessionId = _prefs.getString('session_id');
     //if(previousSessionId)
     return false;
+  }
+
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    return directory.path;
+  }
+
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/counter.txt');
+  }
+
+  Future<File> writeSessionID() async {
+    final file = await _localFile;
+    return file.writeAsString(sessionId);
+  }
+
+  Future<void> readSessionID() async {
+    try {
+      final file = await _localFile;
+      final contents = await file.readAsString();
+      sessionId=contents;
+    } catch (e) {
+      sessionId="";
+    }
   }
 }

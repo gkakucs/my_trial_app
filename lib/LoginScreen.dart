@@ -24,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> getSession() async {
     if (await userData.getSessionID()) {
+      userData.writeSessionID();
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       MotionToast.error(

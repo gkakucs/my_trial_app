@@ -6,6 +6,7 @@ import 'package:my_trial_app/HomeScreen.dart';
 void main() {
   runApp(MaterialApp(
     initialRoute: '/',
+    title: 'My Trial IMDB App',
     routes: {
       '/': (context) => const SplashScreen(),
       '/login':(context) => const LoginScreen(),

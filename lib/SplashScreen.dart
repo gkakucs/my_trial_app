@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> checkUserLoggedIn() async{
 
-    if (false) {
+    if (userData.sessionId.isNotEmpty) {
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       Navigator.pushReplacementNamed(context, '/login');
@@ -65,7 +65,8 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     movieData.getConfiguration();
-    Future.delayed(const Duration(seconds: 5), () => {checkInternet()});
+    userData.readSessionID().then((value) => checkInternet());
+   // Future.delayed(const Duration(seconds: 5), () => {checkInternet()});
   }
 
   @override
