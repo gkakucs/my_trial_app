@@ -209,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ).show(context);
     }
-    getUserInformation();
+    await getUserInformation();
     setState(() {});
   }
 
