@@ -66,34 +66,36 @@ class _HomeScreenState extends State<HomeScreen> {
                               String title = movieData.movies.elementAt(index).name;
                               Image img = movieData.movies.elementAt(index).img;
                               int id = movieData.movies.elementAt(index).id;
-                              return Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Stack(
-                                      alignment: Alignment.topRight,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: SizedBox(
-                                            child: img,
-                                            width: 300,
-                                            height: 400,
+                              return Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Stack(
+                                        alignment: Alignment.topRight,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(1.0),
+                                            child: SizedBox(
+                                              child: img,
+                                              width: 300,
+                                              height: 400,
+                                            ),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: IconButton(
-                                            icon: const Icon(Icons.favorite, color: Colors.red, size: 30),
-                                            onPressed: () {
-                                              setFavorite(id);
-                                            },
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(0,0,15,0),
+                                            child: IconButton(
+                                              icon: const Icon(Icons.favorite, color: Colors.red, size: 30),
+                                              onPressed: () {
+                                                setFavorite(id);
+                                              },
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             }))),
@@ -109,17 +111,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           String title = movieData.favoriteMovies.elementAt(index).name;
                           Image img = movieData.favoriteMovies.elementAt(index).img;
                           int id = movieData.favoriteMovies.elementAt(index).id;
-                          return Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  child: img,
-                                  width: 300,
-                                  height: 400,
-                                ),
-                              ],
+                          return Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    child: img,
+                                    width: 300,
+                                    height: 400,
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         },
