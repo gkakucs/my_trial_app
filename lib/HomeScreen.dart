@@ -47,7 +47,9 @@ class _HomeScreenState extends State<HomeScreen> {
               title: const Text("My IMDB App"),
               bottom: const TabBar(
                 tabs: [
-                  Tab(child: Text("Movie List"),),
+                  Tab(
+                    child: Text("Movie List"),
+                  ),
                   Tab(child: Text("Favorites")),
                   Tab(child: Text("User data")),
                 ],
@@ -66,36 +68,34 @@ class _HomeScreenState extends State<HomeScreen> {
                               String title = movieData.movies.elementAt(index).name;
                               Image img = movieData.movies.elementAt(index).img;
                               int id = movieData.movies.elementAt(index).id;
-                              return Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Stack(
-                                        alignment: Alignment.topRight,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(1.0),
-                                            child: SizedBox(
-                                              child: img,
-                                              width: 300,
-                                              height: 400,
-                                            ),
+                              return Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Stack(
+                                      alignment: Alignment.topRight,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(1.0),
+                                          child: SizedBox(
+                                            child: img,
+                                            width: 300,
+                                            height: 400,
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(0,0,15,0),
-                                            child: IconButton(
-                                              icon: const Icon(Icons.favorite, color: Colors.red, size: 30),
-                                              onPressed: () {
-                                                setFavorite(id);
-                                              },
-                                            ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+                                          child: IconButton(
+                                            icon: const Icon(Icons.favorite, color: Colors.red, size: 30),
+                                            onPressed: () {
+                                              setFavorite(id);
+                                            },
                                           ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               );
                             }))),
@@ -111,19 +111,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           String title = movieData.favoriteMovies.elementAt(index).name;
                           Image img = movieData.favoriteMovies.elementAt(index).img;
                           int id = movieData.favoriteMovies.elementAt(index).id;
-                          return Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    child: img,
-                                    width: 300,
-                                    height: 400,
-                                  ),
-                                ],
-                              ),
+                          return Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  child: img,
+                                  width: 300,
+                                  height: 400,
+                                ),
+                              ],
                             ),
                           );
                         },
@@ -172,13 +170,29 @@ class _HomeScreenState extends State<HomeScreen> {
                                 getUserInformation();
                               })
                             },
-                        child: const Text("Refresh"))
+                        child: const Text("Refresh")),
+                    ElevatedButton(onPressed: () => {logout()}, child: const Text("Log out")),
                   ],
                 ),
               ],
             ),
           ),
         ));
+  }
+
+  Future<void> logout() async {
+    if (await userData.logoutUser()) {
+      MotionToast.success(
+        description: const Text("User logged out!"),
+        title: const Text("Information"),
+      ).show(context);
+      Future.delayed(Duration(seconds: 3), () => {Navigator.pushReplacementNamed(context, '/login')});
+    } else {
+      MotionToast.error(
+        description: const Text("Could not log out user!"),
+        title: const Text("Error"),
+      ).show(context);
+    }
   }
 
   Future<void> getUserInformation() async {

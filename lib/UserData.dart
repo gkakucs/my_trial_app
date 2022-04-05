@@ -10,12 +10,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserData {
-
-  int id=0;
-  String name='';
+  int id = 0;
+  String name = '';
   String userName = '';
   String sessionId = '';
-  String avatarPath ='';
+  String avatarPath = '';
   bool includeAdult = false;
   String requestTokenString = '';
   Image avatarImg = Image.asset('logo.png');
@@ -25,6 +24,7 @@ class UserData {
   UserData._internal();
 
   static final UserData _userData = UserData._internal();
+
   factory UserData() {
     return _userData;
   }
@@ -115,9 +115,9 @@ class UserData {
           name = queryData["name"];
           userName = queryData["username"];
           includeAdult = queryData["include_adult"];
-          Map<String,dynamic> avatar  = queryData["avatar"];
-          Map<String,dynamic> tmdb = avatar["tmdb"];
-          avatarPath=tmdb["avatar_path"];
+          Map<String, dynamic> avatar = queryData["avatar"];
+          Map<String, dynamic> tmdb = avatar["tmdb"];
+          avatarPath = tmdb["avatar_path"];
           avatarImg = await getImage(avatarPath);
           return true;
         }
@@ -136,7 +136,37 @@ class UserData {
     }
   }
 
-  Future<bool> checkForPreviousUserSession() async{
+  Future<bool> logoutUser() async {
+    //https://developers.themoviedb.org/3/authentication/delete-session
+    final response = await http.delete(
+        Uri.parse("https://api.themoviedb.org/3/authentication/session?api_key=" + MyConstants.API_Key),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{'session_id': sessionId}));
+    switch (response.statusCode) {
+      case 200:
+        {
+          sessionId = "";
+          await writeSessionID();
+          return true;
+        }
+      case 401:
+        {
+          return false;
+        }
+      case 404:
+        {
+          return false;
+        }
+      default:
+        {
+          return false;
+        }
+    }
+  }
+
+  Future<bool> checkForPreviousUserSession() async {
     final _prefs = await SharedPreferences.getInstance();
     final String? previousSessionId = _prefs.getString('session_id');
     //if(previousSessionId)
@@ -163,9 +193,9 @@ class UserData {
     try {
       final file = await _localFile;
       final contents = await file.readAsString();
-      sessionId=contents;
+      sessionId = contents;
     } catch (e) {
-      sessionId="";
+      sessionId = "";
     }
   }
 }
