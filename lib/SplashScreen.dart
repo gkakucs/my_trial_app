@@ -36,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
           'Network connection OK',
         ),
       ).show(context);
-      checkUserLoggedIn();
+      Future.delayed(const Duration(seconds: 5), () => {checkUserLoggedIn()});
     } else {
       MotionToast.error(
         title: const Text('Error'),
